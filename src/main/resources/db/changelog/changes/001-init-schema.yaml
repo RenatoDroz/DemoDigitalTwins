@@ -1,0 +1,91 @@
+databaseChangeLog:
+
+  - changeSet:
+      id: 001-create-drill-bit-table
+      author: twins
+      changes:
+        - createTable:
+            tableName: drill_bit
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: asset_id
+                  type: varchar(100)
+                  constraints:
+                    unique: true
+                    nullable: false
+
+              - column:
+                  name: status
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: last_update
+                  type: timestamp
+
+              - column:
+                  name: version
+                  type: bigint
+
+  - changeSet:
+      id: 002-create-sensor-table
+      author: twins
+      changes:
+        - createTable:
+            tableName: sensor
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: sensor_id
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: asset_id
+                  type: varchar(100)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: type
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: last_value
+                  type: double precision
+
+              - column:
+                  name: status
+                  type: varchar(30)
+                  constraints:
+                    nullable: false
+
+              - column:
+                  name: last_update
+                  type: timestamp
+
+              - column:
+                  name: version
+                  type: bigint
+
+        - addUniqueConstraint:
+            tableName: sensor
+            columnNames: asset_id, sensor_id
+            constraintName: ux_sensor_asset_sensor
