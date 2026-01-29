@@ -14,7 +14,7 @@ public class PressureSensorTwin extends SensorTwin {
 
     public PressureSensorTwin(String id) {
         super(id);
-        log.info("Pressure Twin created for sensor {}", id);
+
     }
 
     @Override

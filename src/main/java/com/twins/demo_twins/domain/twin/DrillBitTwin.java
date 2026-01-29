@@ -1,8 +1,8 @@
 package com.twins.demo_twins.domain.twin;
 
-import com.twins.demo_twins.domain.dto.TwinChangeSet;
 import com.twins.demo_twins.domain.dto.DrillBitSnapshotDTO;
 import com.twins.demo_twins.domain.dto.SensorSnapshotDTO;
+import com.twins.demo_twins.domain.dto.TwinChangeSet;
 import com.twins.demo_twins.domain.event.SensorEvent;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,7 +30,6 @@ public class DrillBitTwin {
 
     public DrillBitTwin(String assetId) {
         this.assetId = assetId;
-        log.info("DrillBit Twin created for asset {}", assetId);
     }
 
     public TwinChangeSet apply(SensorEvent event) {
@@ -59,6 +58,7 @@ public class DrillBitTwin {
     }
 
     private SensorTwin createSensorTwin(SensorEvent event) {
+        log.info("Creating {} Sensor Twin for sensorId: {}", event.getType().name(), event.getSensorId());
         return switch (event.getType()) {
             case TEMPERATURE -> new TemperatureSensorTwin(event.getSensorId());
             case PRESSURE -> new PressureSensorTwin(event.getSensorId());
@@ -80,6 +80,7 @@ public class DrillBitTwin {
     }
 
     private SensorTwin restoreSensorTwin(SensorSnapshotDTO sensorDTO) {
+        log.info("Restoring Sensor Twin for sensorId: {}", sensorDTO.sensorId());
         return switch (sensorDTO.type()) {
             case TEMPERATURE -> {
                 TemperatureSensorTwin t = new TemperatureSensorTwin(sensorDTO.sensorId());

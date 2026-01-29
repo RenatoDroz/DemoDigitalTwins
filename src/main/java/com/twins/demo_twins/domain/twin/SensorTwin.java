@@ -17,6 +17,7 @@ public abstract class SensorTwin {
     protected SensorTwin(String sensorId) {
         this.sensorId = sensorId;
         this.status = Status.OK;
+        this.value = 0.0;
     }
 
     public abstract boolean apply(SensorEvent event);

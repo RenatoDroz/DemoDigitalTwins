@@ -20,7 +20,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class TwinSnapshotWriteService {
 
-    private static final Duration DEBOUNCE = Duration.ofMinutes(5);
+    private static final Duration DEBOUNCE = Duration.ofMinutes(1);
 
     private final DrillBitRepository drillBitRepository;
     private final SensorRepository sensorRepository;

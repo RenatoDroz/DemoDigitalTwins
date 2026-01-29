@@ -14,7 +14,6 @@ public class TemperatureSensorTwin extends SensorTwin {
 
     public TemperatureSensorTwin(String id) {
         super(id);
-        log.info("Temperature Twin created for sensor {}", id);
     }
 
     @Override
