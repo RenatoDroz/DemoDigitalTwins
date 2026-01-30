@@ -67,6 +67,19 @@ services:
       timeout: 3s
       retries: 5
 
+  timescaledb:
+    image: timescale/timescaledb:latest-pg17
+    container_name: timescaledb
+    environment:
+      POSTGRES_DB: twins_ts
+      POSTGRES_USER: twins
+      POSTGRES_PASSWORD: twins
+    ports:
+      - "5433:5432"
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+
 volumes:
   postgres_data:
   redis-data:
+  timescale_data:

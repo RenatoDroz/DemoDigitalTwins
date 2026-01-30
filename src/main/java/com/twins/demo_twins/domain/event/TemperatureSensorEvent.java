@@ -20,6 +20,11 @@ public record TemperatureSensorEvent(
     }
 
     @Override
+    public Double getValue() {
+        return value;
+    }
+
+    @Override
     public SensorType getType() {
         return type;
     }

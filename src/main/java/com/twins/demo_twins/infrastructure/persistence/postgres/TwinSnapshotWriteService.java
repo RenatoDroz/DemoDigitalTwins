@@ -1,10 +1,10 @@
-package com.twins.demo_twins.infrastructure.persistence;
+package com.twins.demo_twins.infrastructure.persistence.postgres;
 
 import com.twins.demo_twins.domain.dto.TwinChangeSet;
 import com.twins.demo_twins.domain.twin.DrillBitTwin;
 import com.twins.demo_twins.domain.twin.SensorTwin;
-import com.twins.demo_twins.infrastructure.persistence.repository.DrillBitRepository;
-import com.twins.demo_twins.infrastructure.persistence.repository.SensorRepository;
+import com.twins.demo_twins.infrastructure.persistence.postgres.repository.DrillBitRepository;
+import com.twins.demo_twins.infrastructure.persistence.postgres.repository.SensorRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

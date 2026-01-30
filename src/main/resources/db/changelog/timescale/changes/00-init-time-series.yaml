@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-extension
+      author: twins
+      changes:
+        - sql: CREATE EXTENSION IF NOT EXISTS timescaledb;
+
+  - changeSet:
+      id: 002-add-table-sensor-measurement
+      author: twins
+      changes:
+        - createTable:
+            tableName: sensor_measurement
+            columns:
+              - column:
+                  name: time
+                  type: timestamptz
+                  constraints:
+                    nullable: false
+              - column:
+                  name: asset_id
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: sensor_id
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: type
+                  type: text
+                  constraints:
+                    nullable: false
+              - column:
+                  name: value
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: status
+                  type: text
+                  constraints:
+                    nullable: false
+
+  - changeSet:
+      id: 003-create-hypertable
+      author: twins
+      changes:
+        - sql: SELECT create_hypertable('sensor_measurement','time', if_not_exists => TRUE);

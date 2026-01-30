@@ -1,6 +1,6 @@
-package com.twins.demo_twins.infrastructure.persistence.repository;
+package com.twins.demo_twins.infrastructure.persistence.postgres.repository;
 
-import com.twins.demo_twins.infrastructure.persistence.entity.SensorEntity;
+import com.twins.demo_twins.infrastructure.persistence.postgres.entity.SensorEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.time.Instant;
 import java.util.List;
 
-public interface SensorRepository extends JpaRepository<SensorEntity, String> {
+public interface SensorRepository extends JpaRepository<SensorEntity, Long> {
 
     @Modifying
     @Query(value = """

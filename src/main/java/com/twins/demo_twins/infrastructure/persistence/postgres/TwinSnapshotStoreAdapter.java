@@ -1,12 +1,12 @@
-package com.twins.demo_twins.infrastructure.persistence;
+package com.twins.demo_twins.infrastructure.persistence.postgres;
 
-import com.twins.demo_twins.domain.dto.TwinChangeSet;
-import com.twins.demo_twins.application.port.out.TwinSnapshotPort;
+import com.twins.demo_twins.application.port.out.TwinSnapshotStorePort;
 import com.twins.demo_twins.domain.dto.DrillBitSnapshotDTO;
 import com.twins.demo_twins.domain.dto.SensorSnapshotDTO;
+import com.twins.demo_twins.domain.dto.TwinChangeSet;
 import com.twins.demo_twins.domain.twin.DrillBitTwin;
-import com.twins.demo_twins.infrastructure.persistence.repository.DrillBitRepository;
-import com.twins.demo_twins.infrastructure.persistence.repository.SensorRepository;
+import com.twins.demo_twins.infrastructure.persistence.postgres.repository.DrillBitRepository;
+import com.twins.demo_twins.infrastructure.persistence.postgres.repository.SensorRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
-public class JpaTwinSnapshotAdapter implements TwinSnapshotPort {
+public class TwinSnapshotStoreAdapter implements TwinSnapshotStorePort {
 
     private final DrillBitRepository drillBitRepository;
     private final SensorRepository sensorRepository;

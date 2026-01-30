@@ -1,7 +1,8 @@
 package com.twins.demo_twins.application.runtime;
 
 import com.twins.demo_twins.application.port.in.SensorEventUseCase;
-import com.twins.demo_twins.application.port.out.TwinSnapshotPort;
+import com.twins.demo_twins.application.port.out.TwinHistoryStorePort;
+import com.twins.demo_twins.application.port.out.TwinSnapshotStorePort;
 import com.twins.demo_twins.application.port.out.TwinStateStorePort;
 import com.twins.demo_twins.domain.dto.DrillBitSnapshotDTO;
 import com.twins.demo_twins.domain.dto.SensorSnapshotDTO;
@@ -22,8 +23,9 @@ import java.util.concurrent.ConcurrentHashMap;
 @RequiredArgsConstructor
 public class DrillBitTwinRuntime implements SensorEventUseCase {
 
-    private final TwinSnapshotPort twinSnapshotPort;
+    private final TwinSnapshotStorePort twinSnapshotStorePort;
     private final TwinStateStorePort twinStateStorePort;
+    private final TwinHistoryStorePort twinHistoryStorePort;
 
     private final Map<String, DrillBitTwin> twins = new ConcurrentHashMap<>();
 
@@ -37,7 +39,8 @@ public class DrillBitTwinRuntime implements SensorEventUseCase {
         TwinChangeSet changeSet = drillBit.apply(event);
 
         twinStateStorePort.save(drillBit);
-        twinSnapshotPort.maybePersist(drillBit, changeSet);
+        twinHistoryStorePort.saveHistoryPoint(drillBit, changeSet.sensor());
+        twinSnapshotStorePort.maybePersist(drillBit, changeSet);
     }
 
     public DrillBitTwin createOrRestoreTwin(String assetId) {
@@ -52,10 +55,10 @@ public class DrillBitTwinRuntime implements SensorEventUseCase {
             return drillBitTwin;
         }
 
-        var drillBit = twinSnapshotPort.loadDrillBit(assetId);
+        var drillBit = twinSnapshotStorePort.loadDrillBit(assetId);
 
         if (drillBit != null) {
-            List<SensorSnapshotDTO> sensors = twinSnapshotPort.loadSensors(assetId);
+            List<SensorSnapshotDTO> sensors = twinSnapshotStorePort.loadSensors(assetId);
             drillBitTwin.restore(drillBit, sensors);
             log.info("DrillBit Twin restored for asset {}", assetId);
         }

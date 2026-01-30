@@ -28,8 +28,22 @@ spring:
 
   liquibase:
     enabled: true
-    change-log: classpath:/db/changelog/changelog-master.yaml
+    change-log: classpath:/db/changelog/postgres/changelog-master.yaml
 
-twin:
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  endpoint:
+    health:
+      show-details: always
+
+twins:
   redis:
     ttl: 24h
+
+  timescale:
+    url: jdbc:postgresql://localhost:5433/twins_ts
+    username: twins
+    password: twins

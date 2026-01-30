@@ -22,7 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RedisTwinStateAdapter implements TwinStateStorePort {
 
-    @Value("${twin.redis.ttl}")
+    @Value("${twins.redis.ttl}")
     private Duration ttl;
     private final RedisTemplate<String, String> redisTemplate;
 

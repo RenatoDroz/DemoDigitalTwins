@@ -21,6 +21,8 @@ public interface SensorEvent {
 
     String getSensorId();
 
+    Double getValue();
+
     SensorType getType();
 
     Instant getEventTime();

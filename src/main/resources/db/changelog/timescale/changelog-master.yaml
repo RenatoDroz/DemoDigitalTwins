@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: changes/00-init-time-series.yaml
+      relativeToChangelogFile: true

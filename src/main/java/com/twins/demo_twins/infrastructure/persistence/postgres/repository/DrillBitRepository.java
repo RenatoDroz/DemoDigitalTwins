@@ -1,6 +1,6 @@
-package com.twins.demo_twins.infrastructure.persistence.repository;
+package com.twins.demo_twins.infrastructure.persistence.postgres.repository;
 
-import com.twins.demo_twins.infrastructure.persistence.entity.DrillBitEntity;
+import com.twins.demo_twins.infrastructure.persistence.postgres.entity.DrillBitEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -9,7 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.time.Instant;
 import java.util.Optional;
 
-public interface DrillBitRepository extends JpaRepository<DrillBitEntity, String> {
+public interface DrillBitRepository extends JpaRepository<DrillBitEntity, Long> {
 
     Optional<DrillBitEntity> findByAssetId(String assetId);
 
