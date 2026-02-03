@@ -121,15 +121,26 @@ The simulator supports a one-shot run (`RUN_ONCE=1`) for quick tests and will re
 - Subjects (Schema Registry, Confluent Avro serializer):
   - `sensor-events-value` (value subject for `sensor-events`)
 
-Example payload (JSON):
+Example message (EventEnvelope JSON):
 
 ```json
 {
-  "assetId": "drill-001",
-  "sensorId": "bit-123-temp",
-  "value": 55.4,
-  "type": "TEMPERATURE",
-  "eventTime": 1670000000000
+	"eventId": {
+		"string": "d0014463-2889-4114-95c5-4deaa044c7e1"
+	},
+	"eventType": "SensorEvent",
+	"timestamp": {
+		"long": "2026-02-03T17:16:53.750Z"
+	},
+	"payload": {
+		"SensorEventAvro": {
+			"assetId": "drill-bit-1",
+			"sensorId": "pressure-1",
+			"value": 34.02,
+			"type": "PRESSURE",
+			"eventTime": "2026-02-03T17:16:53.750Z"
+		}
+	}
 }
 ```
 
