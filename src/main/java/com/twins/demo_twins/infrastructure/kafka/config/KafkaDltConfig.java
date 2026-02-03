@@ -1,4 +1,4 @@
-package com.twins.demo_twins.infrastructure.kafka;
+package com.twins.demo_twins.infrastructure.kafka.config;
 
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.ByteArraySerializer;
@@ -21,14 +21,19 @@ public class KafkaDltConfig {
 
         Map<String, Object> props = new HashMap<>(properties.buildProducerProperties());
 
-        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
+        props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
+                StringSerializer.class);
+
+        props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
+                ByteArraySerializer.class);
 
         return new DefaultKafkaProducerFactory<>(props);
     }
 
     @Bean
-    public KafkaTemplate<Object, Object> dltKafkaTemplate(ProducerFactory<Object, Object> dltProducerFactory) {
-        return new KafkaTemplate<>(dltProducerFactory);
+    public KafkaTemplate<Object, Object> dltKafkaTemplate(
+            ProducerFactory<Object, Object> factory) {
+
+        return new KafkaTemplate<>(factory);
     }
 }

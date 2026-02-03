@@ -1,0 +1,37 @@
+{
+  "type": "record",
+  "name": "EventEnvelopeAvro",
+  "namespace": "com.twins.demo_twins.infrastructure.kafka.avro",
+  "doc": "Envelope for events; contains metadata and a typed payload.",
+  "fields": [
+    {
+      "name": "eventId",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Unique identifier for the event (UUID). May be null for legacy events."
+    },
+    {
+      "name": "eventType",
+      "type": "string",
+      "doc": "Logical type/name of the event, used for routing and consumer selection."
+    },
+    {
+      "name": "source",
+      "type": ["null", "string"],
+      "default": null,
+      "doc": "Origin of the event (e.g., asset or system id)."
+    },
+    {
+      "name": "timestamp",
+      "type": ["null", { "type": "long", "logicalType": "timestamp-millis" }],
+      "default": null,
+      "doc": "Event timestamp in milliseconds since epoch (nullable)."
+    },
+    {
+      "name": "payload",
+      "type": ["null", "com.twins.demo_twins.infrastructure.kafka.avro.SensorEventAvro"],
+      "default": null,
+      "doc": "Union of allowed typed event payloads."
+    }
+  ]
+}

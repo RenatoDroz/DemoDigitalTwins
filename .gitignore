@@ -39,3 +39,5 @@ out/
 # === Secrets ===
 .env
 *.swp
+
+/scripts/.venv/

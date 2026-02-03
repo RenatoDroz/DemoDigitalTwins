@@ -1,121 +1,176 @@
 # Demo Twins
 
-Demo Twins is a Java Spring Boot demo that implements a digital-twin pattern for drill-bit sensors. The project consumes sensor events from Kafka, keeps fast-access state in Redis, writes time-series measurements to TimescaleDB, and stores domain snapshots in PostgreSQL.
+[![Build](https://img.shields.io/badge/build-maven-blue)](https://github.com/) [![Java](https://img.shields.io/badge/Java-17%2B-orange)](https://www.oracle.com/java/) [![Docker Compose](https://img.shields.io/badge/docker--compose-ready-blue)](https://docs.docker.com/compose/) [![Kafka](https://img.shields.io/badge/Kafka-Confluent-orange?logo=apachekafka)](https://kafka.apache.org/) [![Postgres](https://img.shields.io/badge/Postgres-Ready-blue?logo=postgresql)](https://www.postgresql.org/) [![TimescaleDB](https://img.shields.io/badge/TimescaleDB-Ready-blue?logo=timescaledb&logoColor=white)](https://www.timescale.com/) [![Redis](https://img.shields.io/badge/Redis-Ready-red?logo=redis)](https://redis.io/) [![Prometheus](https://img.shields.io/badge/Prometheus-Ready-orange?logo=prometheus)](https://prometheus.io/) [![Grafana](https://img.shields.io/badge/Grafana-Ready-blue?logo=grafana)](https://grafana.com/)
+
+**Demo Twins** is a Java Spring Boot demo that implements a digital‑twin pattern for drill‑bit sensors. The project consumes sensor events from Kafka (Avro + Confluent Schema Registry), keeps fast-access state in Redis, writes time-series measurements to TimescaleDB, and stores domain snapshots in PostgreSQL.
+
+---
+
+## Table of contents
+
+- [Architecture](#architecture)
+- [Project Structure (high level)](#project-structure-high-level)
+- [Requirements](#requirements)
+- [Quick Commands](#quick-commands)
+- [Local Quick Start (full stack)](#local-quick-start-full-stack)
+- [Producer simulator (Avro)](#producer-simulator-avro)
+- [Schema registry & Avro tooling](#schema-registry--avro-tooling)
+- [Example payload & topics](#example-payload--topics)
+- [Observability](#observability)
+- [Notes](#notes)
+
+## Quick Commands
+
+- Start infra: `docker compose -f compose.yaml up -d`
+- Create Kafka topics: `./scripts/create-kafka-topics.sh`
+- Build: `./mvnw -DskipTests package`
+- Run: `./mvnw spring-boot:run`
+- Run simulator (one-shot): `RUN_ONCE=1 python scripts/producer_simulator.py`
+
+---
 
 ## Architecture
 
 This project follows a Hexagonal (Ports & Adapters) architecture: application ports define use-cases, domain contains business logic and models, and infrastructure provides adapters (Kafka, Redis, JPA, Timescale).
 
-## Project Structure (hexagonal, high level)
+## Project Structure (high level)
 
 - **Application (ports & runtime):** `src/main/java/com/twins/demo_twins/application`
-	- Contains use-case interfaces and the runtime that orchestrates twin updates (e.g. `DrillBitTwinRuntime`, `SensorEventUseCase`).
 - **Domain (core model):** `src/main/java/com/twins/demo_twins/domain`
-	- Entities, DTOs and events (`twin`, `event`, `dto`).
-- **Infrastructure (adapters):** `src/main/java/com/twins/demo_twins/infrastructure`
-	- Kafka consumer (`SensorEventListener`), Redis adapter (`RedisTwinStateAdapter`), persistence adapters for Postgres (JPA) and TimescaleDB (`TwinSnapshotWriteService`, `TimeSeriesService`).
-- **Resources & DB migrations:** `src/main/resources` (includes `application.yaml` and `db/changelog` for Liquibase).
-- **Scripts:** `scripts/` — helper scripts to create Kafka topics (`create-kafka-topics.sh`, `create-kafka-topics.ps1`).
+- **Infrastructure (adapters):** `src/main/java/com/twins/demo_twins/infrastructure` (Kafka consumer `SensorEventListener`, Redis adapter, persistence adapters)
+- **Avro schemas:** `src/main/avro` (`EventEnvelopeAvro.avsc`, `SensorEventAvro.avsc`)
+- **Scripts:** `scripts/` — helpers to create Kafka topics and run the producer simulator
 
-Key classes: `DrillBitTwinRuntime`, `SensorEventListener`, `RedisTwinStateAdapter`, `TwinSnapshotWriteService`, `TimeSeriesService`.
+---
 
 ## Requirements
 
-- Java 17+ (or the Java version used by your environment)
-- Docker and Docker Compose (to run Kafka, Postgres/Timescale, Redis)
-- Maven (you can use the included wrappers: `mvnw` / `mvnw.cmd`)
+- Java 17+
+- Docker & Docker Compose
+- Maven (`mvnw` included)
+- Python 3.8+ to run the simulator (recommended packages below)
 
-## Local Setup
+---
 
-1. Start infrastructure services (Kafka, Postgres/Timescale, Redis):
+## Local Quick Start (full stack)
+
+1. Start infra services:
 
 ```bash
 docker compose -f compose.yaml up -d
 ```
 
-2. Create required Kafka topics (optional scripts provided):
+2. Create Kafka topics:
 
 ```bash
 ./scripts/create-kafka-topics.sh
-# or on Windows PowerShell
+# or on PowerShell
 ./scripts/create-kafka-topics.ps1
 ```
 
-3. Build the application:
+3. Ensure Avro schemas are registered in Schema Registry (used by the UI and producers/consumers). You can use the Maven plugin configured in this project or the Schema Registry UI/API.
+
+4. Build & run the app:
 
 ```bash
-# Unix
+# Build
 ./mvnw -DskipTests package
-# Windows
-mvnw.cmd -DskipTests package
-```
-
-4. Run the application:
-
-```bash
-# Run with the Maven Spring Boot plugin
+# Run
 ./mvnw spring-boot:run
-
-# or run the packaged jar
+# or
 java -jar target/*.jar
 ```
 
-5. Application configuration is in `src/main/resources/application.yaml`. Adjust Kafka, DB and Redis connection settings there or via environment variables.
+---
 
-## Kafka message example
+## Producer simulator (Avro)
 
-- Topic key (partitioning key): the `assetId` (example: `drill-bit-1`).
-- Message value (JSON payload):
+The simulator serializes Avro and uses Schema Registry. Recommended Python packages:
 
-```json
-{
-	"assetId": "drill-bit-1",
-	"sensorId": "pressure-1",
-	"value": 80.0,
-	"type": "PRESSURE",
-	"eventTime": "2026-01-29T19:51:00.000Z"
-}
+```bash
+pip install confluent-kafka fastavro
 ```
 
-Fields:
-- `assetId` — unique identifier for the drill bit (used as message key).
-- `sensorId` — sensor identifier.
-- `value` — numeric sensor measurement.
-- `type` — sensor type (`PRESSURE`, `TEMPERATURE`, ...).
-- `eventTime` — ISO-8601 timestamp of the reading.
+Quick start (Windows PowerShell):
 
-## Sensor event simulator
-
-A simple Python script is provided at `scripts/producer_simulator.py` to send simulated sensor events to Kafka. Use it to test the application locally by producing messages to the `sensor-events` topic.
-
-### Requirements
-- Python 3.8+
-- Install the Kafka client library: `pip install kafka-python`
-
-### Quick start (Windows PowerShell)
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install kafka-python
+pip install confluent-kafka fastavro
 python scripts\producer_simulator.py
 ```
 
-### Quick start (Unix / macOS)
+(Unix):
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install kafka-python
+pip install confluent-kafka fastavro
 python3 scripts/producer_simulator.py
 ```
 
-The script uses the default Kafka bootstrap server `localhost:9092`. If your Kafka broker is running elsewhere, edit `scripts/producer_simulator.py` and update `KAFKA_BOOTSTRAP = "host:port"` accordingly. Stop the simulator with Ctrl+C.
+The simulator supports a one-shot run (`RUN_ONCE=1`) for quick tests and will register or reference payload schemas when necessary.
+
+---
+
+## Example payload & topics
+
+- Topics:
+  - `sensor-events` — main topic for sensor events
+  - `sensor-events-dlt` — dead-letter topic for failed messages
+- Subjects (Schema Registry, Confluent Avro serializer):
+  - `sensor-events-value` (value subject for `sensor-events`)
+
+Example payload (JSON):
+
+```json
+{
+  "assetId": "drill-001",
+  "sensorId": "bit-123-temp",
+  "value": 55.4,
+  "type": "TEMPERATURE",
+  "eventTime": 1670000000000
+}
+```
+
+You can list registered subjects with: `curl http://localhost:8081/subjects`
+
+---
+
+## Schema registry & Avro tooling
+
+This project includes Avro schemas in `src/main/avro` and provides tools to generate Java classes and register schemas to Confluent Schema Registry.
+
+- Generate Avro Java classes:
+  - `./mvnw -DskipTests generate-sources` (or `./mvnw -DskipTests package`).
+  - Generated classes are placed in `target/generated-sources/avro` and will be compiled into the application.
+
+- Register schemas to Schema Registry (Confluent Maven plugin):
+
+```bash
+# explicit plugin invocation (works even without plugin in pom)
+./mvnw io.confluent:kafka-schema-registry-maven-plugin:8.1.1:register -Dschema.registry.url=http://localhost:8081
+
+# or, invoke the configured plugin goal directly 
+./mvnw io.confluent:kafka-schema-registry-maven-plugin:register -Dschema.registry.url=http://localhost:8081
+```
+
+- Useful Schema Registry HTTP commands:
+  - List subjects: `curl http://localhost:8081/subjects`
+  - List versions for a subject: `curl http://localhost:8081/subjects/<subject>/versions`
+  - Get schema by id: `curl http://localhost:8081/schemas/ids/<id>`
+
+---
+
+## Observability
+
+- **Prometheus** is exposed at `http://localhost:9090` (compose service `prometheus`), scraping the Spring Boot actuator at `host.docker.internal:8080/actuator/prometheus` by default.
+- **Grafana** is available at `http://localhost:3000` (compose service `grafana`). Dashboards can be configured to read the Prometheus datasource.
+
+---
 
 ## Notes
 
-- Database schema and time-series tables are managed with Liquibase changelogs under `src/main/resources/db/changelog`.
-- Kafka error handling and dead-letter configuration is implemented under `infrastructure/kafka`.
-- The project uses separate adapters for snapshot storage (`persistence/postgres`) and time-series (`persistence/timescale`).
+- DB schema changes are managed with Liquibase under `src/main/resources/db/changelog`.
+- Kafka handling and DLQ logic is implemented under `infrastructure/kafka`.
 
-## License & Contact
-
-This repository is provided as a demo. For questions or improvements, open an issue or contact the maintainer.

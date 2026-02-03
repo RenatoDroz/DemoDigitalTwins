@@ -1,0 +1,38 @@
+{
+  "type": "record",
+  "name": "SensorEventAvro",
+  "namespace": "com.twins.demo_twins.infrastructure.kafka.avro",
+  "doc": "Sensor event payload for digital twin. All fields are required to ensure accurate state representation.",
+  "fields": [
+    {
+      "name": "assetId",
+      "type": "string",
+      "doc": "Identifier of the asset (required)."
+    },
+    {
+      "name": "sensorId",
+      "type": "string",
+      "doc": "Identifier of the sensor (required)."
+    },
+    {
+      "name": "value",
+      "type": "double",
+      "doc": "Sensor measurement value (required)."
+    },
+    {
+      "name": "type",
+      "type": {
+        "type": "enum",
+        "name": "SensorTypeAvro",
+        "symbols": ["TEMPERATURE", "PRESSURE"],
+        "doc": "Type of sensor (enum)."
+      },
+      "doc": "Sensor type (required)."
+    },
+    {
+      "name": "eventTime",
+      "type": { "type": "long", "logicalType": "timestamp-millis" },
+      "doc": "Event time in milliseconds since epoch (required)."
+    }
+  ]
+}

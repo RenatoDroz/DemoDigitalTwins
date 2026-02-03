@@ -1,7 +1,11 @@
 package com.twins.demo_twins.infrastructure.kafka;
 
+
 import com.twins.demo_twins.application.port.in.SensorEventUseCase;
 import com.twins.demo_twins.domain.event.SensorEvent;
+import com.twins.demo_twins.infrastructure.kafka.avro.EventEnvelopeAvro;
+import com.twins.demo_twins.infrastructure.kafka.avro.SensorEventAvro;
+import com.twins.demo_twins.infrastructure.kafka.mapper.SensorEventMapper;
 import io.micrometer.core.instrument.MeterRegistry;
 import io.micrometer.core.instrument.Timer;
 import lombok.AllArgsConstructor;
@@ -16,6 +20,7 @@ public class SensorEventListener {
 
     private final SensorEventUseCase eventUseCase;
     private final MeterRegistry meterRegistry;
+    private final SensorEventMapper mapper;
 
 
     @KafkaListener(
@@ -24,9 +29,11 @@ public class SensorEventListener {
                     "spring.json.value.default.type=com.twins.demo_twins.domain.event.SensorEvent"
             }
     )
-    public void eventListner(SensorEvent event) {
-
+    public void eventListner(EventEnvelopeAvro envelope) {
         Timer.Sample sample = Timer.start(meterRegistry);
+
+        SensorEventAvro payload = envelope.getPayload();
+        SensorEvent event = mapper.toDomain(payload);
 
         try {
             eventUseCase.handle(event);
