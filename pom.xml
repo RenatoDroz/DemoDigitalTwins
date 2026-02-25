@@ -231,7 +231,7 @@
     <pluginRepositories>
         <pluginRepository>
             <id>confluent</id>
-            <url>https://packages.confluent.io</url>
+            <url>https://packages.confluent.io/maven/</url>
         </pluginRepository>
     </pluginRepositories>
 

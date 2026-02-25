@@ -160,11 +160,13 @@ This project includes Avro schemas in `src/main/avro` and provides tools to gene
 
 ```bash
 # explicit plugin invocation (works even without plugin in pom)
-./mvnw io.confluent:kafka-schema-registry-maven-plugin:8.1.1:register -Dschema.registry.url=http://localhost:8081
+./mvnw -U io.confluent:kafka-schema-registry-maven-plugin:8.1.1:register -Dschema.registry.url=http://localhost:8081
 
 # or, invoke the configured plugin goal directly 
-./mvnw io.confluent:kafka-schema-registry-maven-plugin:register -Dschema.registry.url=http://localhost:8081
+./mvnw -U io.confluent:kafka-schema-registry-maven-plugin:register -Dschema.registry.url=http://localhost:8081
 ```
+
+Use `-U` to force Maven to refresh plugin/dependency metadata after a previous resolution failure cached in the local repository.
 
 - Useful Schema Registry HTTP commands:
   - List subjects: `curl http://localhost:8081/subjects`
@@ -184,4 +186,3 @@ This project includes Avro schemas in `src/main/avro` and provides tools to gene
 
 - DB schema changes are managed with Liquibase under `src/main/resources/db/changelog`.
 - Kafka handling and DLQ logic is implemented under `infrastructure/kafka`.
-
