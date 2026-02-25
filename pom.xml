@@ -194,15 +194,15 @@
                     </schemaRegistryUrls>
                     <subjects>
                         <sensor-event-value>src/main/avro/SensorEventAvro.avsc</sensor-event-value>
-                        <event-envelope-value>src/main/avro/EventEnvelopeAvro.avsc</event-envelope-value>
+                        <sensor-events-value>src/main/avro/EventEnvelopeAvro.avsc</sensor-events-value>
                     </subjects>
                     <references>
-                        <event-envelope-value>
+                        <sensor-events-value>
                             <reference>
                                 <name>com.twins.demo_twins.infrastructure.kafka.avro.SensorEventAvro</name>
                                 <subject>sensor-event-value</subject>
                             </reference>
-                        </event-envelope-value>
+                        </sensor-events-value>
                     </references>
                     <compatibilityLevels/>
                 </configuration>

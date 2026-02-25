@@ -85,10 +85,10 @@ java -jar target/*.jar
 
 ## Producer simulator (Avro)
 
-The simulator serializes Avro and uses Schema Registry. Recommended Python packages:
+The simulator serializes Avro and uses Schema Registry. Install dependencies from:
 
 ```bash
-pip install confluent-kafka fastavro
+pip install -r scripts/producer-requirements.txt
 ```
 
 Quick start (Windows PowerShell):
@@ -96,7 +96,7 @@ Quick start (Windows PowerShell):
 ```powershell
 python -m venv .venv
 .venv\Scripts\Activate.ps1
-pip install confluent-kafka fastavro
+pip install -r scripts/producer-requirements.txt
 python scripts\producer_simulator.py
 ```
 
@@ -105,7 +105,7 @@ python scripts\producer_simulator.py
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-pip install confluent-kafka fastavro
+pip install -r scripts/producer-requirements.txt
 python3 scripts/producer_simulator.py
 ```
 
@@ -167,6 +167,7 @@ This project includes Avro schemas in `src/main/avro` and provides tools to gene
 ```
 
 Use `-U` to force Maven to refresh plugin/dependency metadata after a previous resolution failure cached in the local repository.
+For topic `sensor-events`, the main value subject is `sensor-events-value` (envelope schema). The `sensor-event-value` subject is kept as a referenced payload schema.
 
 - Useful Schema Registry HTTP commands:
   - List subjects: `curl http://localhost:8081/subjects`
